@@ -1,8 +1,8 @@
 <template>
     <div class="row justify-content-center">
         <div class="col-md-6">
-            <h1>Novo Produto</h1>
-            <form @submit.prevent="handleSubmitForm">
+            <h1>Editar Produto</h1>
+            <form @submit.prevent="handleUpdateForm">
                 <div class="form-group">
                     <label for="nomeProduto">Nome produto</label>
                     <input type="text" class="form-control" v-model="produto.nomeProduto" required>
@@ -24,7 +24,7 @@
                     <input type="text" class="form-control" v-model="produto.vendedor" required>
                 </div>
                 <div class="form-group mt-3">
-                    <button class="btn btn-success btn-block w-100" type="submit">Criar</button>
+                    <button class="btn btn-success btn-block w-100" type="submit">Alterar</button>
                 </div>
             </form>
         </div>
@@ -38,23 +38,25 @@ import axios from 'axios'
 export default {
     data() {
         return {
-            produto: {
-                id: '',
-                nomeProduto: '',
-                qtd: '',
-                valor: '',
-                descricao: '',
-                vendedor: ''
-            }
+            produto: {}
         }
     },
+    created() {
+        let apiURL = `http://localhost:3000/produtos/${this.$route.params.id}`;
+        axios.get(apiURL).then((res) => {
+            this.produto = res.data
+        }).catch(error => {
+            console.log(error)
+        })
+    },
     methods: {
-        handleSubmitForm() {
-            let apiURL = 'http://localhost:3000/produtos'
+        handleUpdateForm() {
+            let apiURL = `http://localhost:3000/produtos/${this.$route.params.id}`;
 
-            axios.post(apiURL, this.produto).then(() => {
-                alert('Produto registrado!!');
-                this.$router.push('/view');
+            axios.put(apiURL, this.produto).then((res) => {
+                console.log(res)
+                alert('Alteração salva!');
+                this.$router.push('/view')
             }).catch(error => {
                 console.log(error)
             })
